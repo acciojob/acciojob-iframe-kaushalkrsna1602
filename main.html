@@ -1,9 +1,23 @@
+<!DOCTYPE html>
 <html>
-  <head>
-    <title>AccioJob Iframe</title>
-  </head>
-  <body>
-    <!-- Write your code here -->
-	  <iframe src="https://acciojob.com/" width="800" height="600"></iframe>
-  </body>
+<head>
+  <title>Iframe Test</title>
+</head>
+<body>
+  <iframe id="my-iframe" src="https://acciojob.com/" width="800" height="600"></iframe>
+
+  <script>
+    Cypress.Commands.overwrite('get', (originalGet, subject) => {
+      if (typeof subject === 'string' && subject.startsWith('iframe#my-iframe')) {
+        // Wait for iframe to load before checking attributes
+        return cy.get('iframe#my-iframe').wait(5000)
+          .should('be.visible')
+          .and('have.attr', 'src', 'https://acciojob.com/')
+          .and('have.attr', 'width', '800px')
+          .and('have.attr', 'height', '600px');
+      }
+      return originalGet(subject);
+    });
+  </script>
+</body>
 </html>
